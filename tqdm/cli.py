@@ -33,11 +33,11 @@ def cast(val, typ):
             raise TqdmTypeError(val + ' : ' + typ)
     try:
         return eval(typ + '("' + val + '")')
-    except Exception:
+    except Exception as e:
         if typ == 'chr':
             return chr(ord(eval('"' + val + '"'))).encode()
         else:
-            raise TqdmTypeError(val + ' : ' + typ)
+            raise TqdmTypeError(val + ' : ' + typ) from e
 
 
 def posix_pipe(fin, fout, delim=b'\\n', buf_size=256,
@@ -215,7 +215,7 @@ Options:
             try:
                 tqdm_args[o] = cast(v, opt_types[o])
             except KeyError as e:
-                raise TqdmKeyError(str(e))
+                raise TqdmKeyError(str(e)) from e
         log.debug('args:' + str(tqdm_args))
 
         delim_per_char = tqdm_args.pop('bytes', False)
